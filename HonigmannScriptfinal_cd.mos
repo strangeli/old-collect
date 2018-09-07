@@ -1,4 +1,4 @@
-
+// This is a script for Modelica simulating 4 simulation programs where the initial values of the following simulation are the final values of the previous simulation. 
 
 
 // Check of the Honigmann Package
