@@ -1,0 +1,47 @@
+PROGRAM currents
+
+--IMPORT 'testmeasure'
+
+VAR 
+lun_var 	: INTEGER
+m					: INTEGER
+--cur_time	: INTEGER
+working		: BOOLEAN EXPORTED FROM testmeasure
+
+BEGIN 
+	$TIMER[1] := 0
+
+OPEN FILE lun_var ('motor_curr.txt', 'WA')
+	
+	WRITE('date: ', DATE, NL)
+	WRITE('time [s after 01/01/1980, 00:00h]: ', CLOCK, NL)
+	
+	WHILE working DO
+
+		--cur_time := CLOCK	
+		--WRITE lun_var (CLOCK) -- time in seconds after 1st January 1980
+		
+		WRITE lun_var ($TIMER[1], '; ')  -- [ms] after the start of the programme.
+	
+		WRITE lun_var ($CRNT_DATA[1].OT_JNT, '; ') 			-- Joint position [°]
+	
+		FOR m := 1 TO ARRAY_DIM1($CRNT_DATA[1].MTR_CURR) DO		-- Motor currents [A]
+			WRITE lun_var ($CRNT_DATA[1].MTR_CURR[m], ', ') 
+		ENDFOR
+		
+			FOR m := 1 TO ARRAY_DIM1($CRNT_DATA[1].RAD_VEL) DO	-- Radiant Velocity of each axis [rad/s]
+			WRITE lun_var ($CRNT_DATA[1].RAD_VEL[m], ', ') 
+		ENDFOR
+		
+		WRITE lun_var ('; ', $CRNT_DATA[1].ARM_VEL) 	-- Arm velocity (cartesian) [m/s]
+	
+		WRITE lun_var (NL)
+	
+		DELAY 10
+	
+	ENDWHILE
+
+	CLOSE FILE lun_var
+
+
+END currents
