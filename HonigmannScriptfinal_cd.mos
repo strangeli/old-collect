@@ -1,0 +1,63 @@
+
+
+
+// Check of the Honigmann Package
+
+checkModel("Honigmann");
+
+
+// ********** DISCHARGE ******************************************************************
+
+cd(".\Disch");
+
+checkModel("Honigmann.Processes.Discharge");
+
+simulateModel("Honigmann.Processes.Discharge(Evaporator.T_liquid_start = (110+273.15), Evaporator.m_total_start = 2, Absorber.T_sol_start = (120+273.15), Absorber.m_sol_start = 4, Absorber.X_s_start = 0.65)", numberOfIntervals=500, method="dassl", tolerance=0.0001, startTime = 0, stopTime = 200, resultFile="Discharge");
+
+fileName_dc ="Discharge.mat";
+n_dc = readTrajectorySize(fileName_dc);
+names_dc = readTrajectoryNames(fileName_dc);
+val_dc = readTrajectory(fileName_dc,{"Time", "Absorber.heatPort.T","Absorber.m_sol", "Absorber.X_s", "Evaporator.heatPort.T", "Evaporator.m_total"},n_dc);
+
+
+// ********** CHARGE 1 ******************************************************************
+
+cd("..\Ch1");
+
+// checkModel("Honigmann.Processes.Charge1");
+
+st1 = val_dc[1,n_dc] // start time for Charge1
+
+simulateModel("Honigmann.Processes.Charge1(Desorber.T_sol_start ="+String(val_dc[2,n_dc])+", Desorber.m_sol_start ="+String(val_dc[3,n_dc])+", Desorber.X_s_start ="+String(val_dc[4,n_dc])+", Condenser.T_liquid_start ="+String(val_dc[5,n_dc])+", Condenser.m_total_start ="+String(val_dc[6,n_dc])+")",numberOfIntervals=500, method="dassl", tolerance=0.0001, startTime = st1, stopTime = 200, resultFile="Charge1");
+
+fileName_c1 = "Charge1.mat";
+n_c1 = readTrajectorySize(fileName_c1);
+names_c1 = readTrajectoryNames(fileName_c1);
+val_c1 = readTrajectory(fileName_c1,{"Time", "Desorber.heatPort.T","Desorber.m_sol", "Desorber.X_s", "Condenser.heatPort.T", "Condenser.m_total"},n_c1);
+
+// ********** CHARGE 2 ******************************************************************
+
+cd("..\Ch2");
+
+checkModel("Honigmann.Processes.Charge2");
+
+st2 = val_c1[1,n_c1] // start time for charge2
+
+simulateModel("Honigmann.Processes.Charge2(Desorber.T_sol_start ="+String(val_c1[2,n_c1])+", Desorber.m_sol_start ="+String(val_c1[3,n_c1])+", Desorber.X_s_start ="+String(val_c1[4,n_c1])+", Condenser.T_liquid_start ="+String(val_c1[5,n_c1])+", Condenser.m_total_start ="+String(val_c1[6,n_c1])+")",numberOfIntervals=500, method="dassl", tolerance=0.0001, startTime = st2, stopTime = 500, resultFile="Charge2");
+
+fileName_c2 = "Charge2.mat";
+n_c2 = readTrajectorySize(fileName_c2);
+names_c2 = readTrajectoryNames(fileName_c2);
+val_c2 = readTrajectory(fileName_c2,{"Time", "Desorber.heatPort.T","Desorber.m_sol", "Desorber.X_s", "Condenser.heatPort.T", "Condenser.m_total"},n_c2);
+
+
+// ********** CHARGE 3 ******************************************************************
+
+cd("..\Ch3");
+
+checkModel("Honigmann.Processes.Charge3");
+
+st3 = val_c2[1,n_c2] // start time for charge3
+
+simulateModel("Honigmann.Processes.Charge3(Desorber.T_sol_start ="+String(val_c2[2,n_c2])+", Desorber.m_sol_start ="+String(val_c2[3,n_c2])+", Desorber.X_s_start ="+String(val_c2[4,n_c2])+", Condenser.T_liquid_start ="+String(val_c2[5,n_c2])+", Condenser.m_total_start ="+String(val_c2[6,n_c2])+")", numberOfIntervals=500, method="dassl", tolerance=0.0001, startTime = st3, stopTime = 700, resultFile="Charge3");
+
